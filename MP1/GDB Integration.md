@@ -39,7 +39,7 @@ kernel.o: kernel.C
 ```
 3. Open`copykernel.sh` and replace `.bin` to `.elf`
 4. Open `linker.ld` and remove the `OUTPUT_FORMAT("binary")`
-5. Open 2 termianl windows and navigate both to the Bochs source code
+5. Open 2 terminal windows and navigate both to the Bochs source code
 
 ## Terminal 1
 ```
