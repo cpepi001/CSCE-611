@@ -59,7 +59,7 @@ target remote: 1234
 ```
 In Terminal 1 this messages will appear `Connected to 127.0.0.1`
 
-## GDB
+## GDB Useful Commands
  - Adding break point with a function name `(gdb) b main`
  - Adding break point on a line number `(gdb) b sample.c:4`
  - Go to next instruction, diving into the function `(gdb) s`
@@ -68,6 +68,18 @@ In Terminal 1 this messages will appear `Connected to 127.0.0.1`
  - To continue the program `(gdb) c`
  - To display the code `(gdb) l`
  - To quit gdb `(gdb) q`
+ 
+## GDB Current Directory Initialization File
+The current directory initialization file contains commands to be executed upon the startup of GDB within the current directory.
+
+`~/<file_path>/.gdbinit`
+
+Create/edit this file to contain any startup behaviour and user defined commands. For example
+```
+file kernel.elf
+target remote: 1234
+```
+This helps us from typing these common commands every single time.
 
 ## Examples
 Setting a breakpoint at funcion main.
