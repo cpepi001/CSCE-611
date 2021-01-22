@@ -22,8 +22,8 @@ gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
 ...
 ```
 2. Open `makefile`
-2.1 Replace **all** `.bin` to `.elf`
-2.2 Add the “-g” flag at each of the compile steps to produce an object file containing the debug information.
+	1. Replace **all** `.bin` to `.elf`
+	2. Add the “-g” flag at each of the compile steps to produce an object file containing the debug information.
 ```
 ...
 # ==== UTILITIES ====
