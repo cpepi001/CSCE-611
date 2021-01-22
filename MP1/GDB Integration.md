@@ -60,13 +60,14 @@ target remote: 1234
 In Terminal 1 this messages will appear `Connected to 127.0.0.1`
 
 ## GDB
-Adding break point on a line number `(gdb) b sample.c:4`
-
-Adding break point with a function name `(gdb) b main`
-
-To continue the program `(gdb) c`
-
-To quit gdb `(gdb) quit`
+ - Adding break point with a function name `(gdb) b main`
+ - Adding break point on a line number `(gdb) b sample.c:4`
+ - Go to next instruction, diving into the function `(gdb) s`
+ - Go to next line of code, but don’t dive into functions `(gdb) n`
+ - To kill the program `(gdb) k`
+ - To continue the program `(gdb) c`
+ - To display the code `(gdb) l`
+ - To quit gdb `(gdb) q`
 
 ## Examples
 Setting a breakpoint at funcion main.
