@@ -61,8 +61,11 @@ In Terminal 1 this messages will appear `Connected to 127.0.0.1`
 
 ## GDB
 Adding break point on a line number `(gdb) b sample.c:4`
+
 Adding break point with a function name `(gdb) b main`
+
 To continue the program `(gdb) c`
+
 To quit gdb `(gdb) quit`
 
 ## Examples
