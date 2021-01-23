@@ -82,8 +82,14 @@ target remote: 1234
 This helps us from typing these common commands every single time.
 
 ## Examples
-Setting a breakpoint at funcion main.
-![Brakepoint @ main()](bmain.png)
+Initial state
+![Initial state](examples/example_1.png)
 
-Continuing the program.
-![After breakpoint](c.png)
+Added a breakpoint at main()
+![Brakepoint @ main()](examples/example_2.png)
+
+Program stoped at the beginning of main
+![Brakepoint @ main()](examples/example_3.png)
+
+Step by step
+![Brakepoint @ main()](examples/example_4.png)
