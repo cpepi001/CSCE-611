@@ -125,9 +125,13 @@ void Console::cls() {
     move_cursor();
 }
 
+void Console::putln() {
+    puts("\n");
+}
+
 /* Puts a single character on the screen */
 void Console::putch(const char _c){
- 
+
 
     /* Handle a backspace, by moving the cursor back one space */
     if(_c == 0x08)
@@ -183,6 +187,7 @@ void Console::puts(const char * _s) {
 
     for (int i = 0; i < strlen(_s); i++) {
         putch(_s[i]);
+        Machine::outportb(0xe9, _s[i]);
     }
 }
 

@@ -90,6 +90,8 @@ public:
   static void cls();
   /* Clear the screen. */
 
+  static void putln();
+
   static void putch(const char _c);
   /* Put a single character on the screen. */
 
