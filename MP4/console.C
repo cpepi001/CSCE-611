@@ -183,6 +183,7 @@ void Console::puts(const char * _s) {
 
     for (int i = 0; i < strlen(_s); i++) {
         putch(_s[i]);
+        Machine::outportb(0xe9, _s[i]);
     }
 }
 

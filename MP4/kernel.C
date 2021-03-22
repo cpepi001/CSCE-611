@@ -216,7 +216,7 @@ int main() {
     Console::puts("Hello World!\n");
 
     /* Comment out the following line to test the VM Pools */
-#define _TEST_PAGE_TABLE_
+//#define _TEST_PAGE_TABLE_
 
 #ifdef _TEST_PAGE_TABLE_
 
@@ -282,7 +282,7 @@ void GenerateVMPoolMemoryReferences(VMPool *pool, int size1, int size2) {
             TestFailed();
          }
       }
-      delete arr;
+      delete[] arr;
    }
 }
 
