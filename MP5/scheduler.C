@@ -46,22 +46,22 @@
 /*--------------------------------------------------------------------------*/
 
 Scheduler::Scheduler() {
-  assert(false);
-  Console::puts("Constructed Scheduler.\n");
+    assert(false);
+    Console::puts("Constructed Scheduler.\n");
 }
 
 void Scheduler::yield() {
-  assert(false);
+    assert(false);
 }
 
-void Scheduler::resume(Thread * _thread) {
-  assert(false);
+void Scheduler::resume(Thread *_thread) {
+    assert(false);
 }
 
-void Scheduler::add(Thread * _thread) {
-  assert(false);
+void Scheduler::add(Thread *_thread) {
+    assert(false);
 }
 
-void Scheduler::terminate(Thread * _thread) {
-  assert(false);
+void Scheduler::terminate(Thread *_thread) {
+    assert(false);
 }

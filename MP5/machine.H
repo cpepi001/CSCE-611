@@ -30,7 +30,7 @@
 /* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
-/* DATA STRUCTURES */ 
+/* DATA STRUCTURES */
 /*--------------------------------------------------------------------------*/
 
 /* REGISTER CONTEXT ON THE STACK WHEN EXCEPTION/INTERRUPT REACHES EXCEPTION
@@ -71,9 +71,9 @@ typedef struct regs {
        As long as you are in kernel mode, the register context
        is 68 bytes long, and not 76! */
     unsigned int useresp;
-    unsigned int ss;    
+    unsigned int ss;
 } REGS;
- 
+
 
 /*--------------------------------------------------------------------------*/
 /* CLASS   M a c h i n e */
@@ -82,49 +82,55 @@ typedef struct regs {
 class Machine {
 
 public:
-    
+
 /*---------------------------------------------------------------*/
 /* DATA AND CODE SEGMENT FOR KERNEL */
 /*---------------------------------------------------------------*/
-  
-  static const unsigned int KERNEL_DS = 0x10;
-  static const unsigned int KERNEL_CS = 0x08;
-    
+
+    static const unsigned int KERNEL_DS = 0x10;
+    static const unsigned int KERNEL_CS = 0x08;
+
 /*---------------------------------------------------------------*/
 /* MEMORY MANAGEMENT */
 /*---------------------------------------------------------------*/
 
-  static const unsigned int PAGE_SIZE = 4096;
-  static const unsigned int PT_ENTRIES_PER_PAGE = 1024;
+    static const unsigned int PAGE_SIZE = 4096;
+    static const unsigned int PT_ENTRIES_PER_PAGE = 1024;
 
 /*---------------------------------------------------------------*/
 /* INTERRUPTS */
 /*---------------------------------------------------------------*/
 
-  /*
-   This is done by checking the Interrupt Enabled flag in the 
-   EFLAG status register and by issuing STI/CLI instructions.
-   (NOTE: If we have multiple threads, each has its own status register.)
-  */
+    /*
+     This is done by checking the Interrupt Enabled flag in the
+     EFLAG status register and by issuing STI/CLI instructions.
+     (NOTE: If we have multiple threads, each has its own status register.)
+    */
 
-  static bool interrupts_enabled();
-  /* Returns whether interrupts are enabled. */
+    static bool interrupts_enabled();
 
-  static void enable_interrupts();
-  static void disable_interrupts();
-  /* Issue CLI/STI instructions. */
+    /* Returns whether interrupts are enabled. */
+
+    static void enable_interrupts();
+
+    static void disable_interrupts();
+    /* Issue CLI/STI instructions. */
 
 /*---------------------------------------------------------------*/
 /* PORT I/O OPERATIONS */
 /*---------------------------------------------------------------*/
 
-  static char inportb  (unsigned short _port);
-  static unsigned short inportw (unsigned short _port);
-  /* Read data from input port _port.*/
+    static char inportb(unsigned short _port);
 
-  static void outportb (unsigned short _port, char _data);
-  static void outportw (unsigned short _port, unsigned short _data);
-  /* Write _data to output port _port.*/
+    static unsigned short inportw(unsigned short _port);
+
+    /* Read data from input port _port.*/
+
+    static void outportb(unsigned short _port, char _data);
+
+    static void outportw(unsigned short _port, unsigned short _data);
+    /* Write _data to output port _port.*/
 
 };
+
 #endif

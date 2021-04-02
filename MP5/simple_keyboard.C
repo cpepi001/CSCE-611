@@ -40,7 +40,7 @@ SimpleKeyboard::SimpleKeyboard() {
 void SimpleKeyboard::handle_interrupt(REGS *_r) {
     /* What to do when keyboard interrupt occurs? In this case, we update
      "key_pressed". */
-    
+
     unsigned char status = Machine::inportb(STATUS_PORT);
     /* lowest bit of status will be set if buffer is not empty. */
     if (status & 0x01) {
@@ -54,19 +54,19 @@ void SimpleKeyboard::handle_interrupt(REGS *_r) {
 
 void SimpleKeyboard::wait() {
     /* Loop until the user presses a key. */
-    
+
     kb.key_pressed = false;
-    
-    while(kb.key_pressed == false);
-    
+
+    while (kb.key_pressed == false);
+
 }
 
 char SimpleKeyboard::read() {
     /* Loop until the user presses a key, and then return the keycode. */
     kb.key_pressed = false;
-    
+
     while (kb.key_pressed == false);
-    
+
     return kb.key_code;
 }
 

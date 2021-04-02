@@ -38,7 +38,7 @@
    Yes, there are more efficient ways to handle exceptions, but they require more
    code replication.
 */
- 
+
 extern "C" void irq0();
 extern "C" void irq1();
 extern "C" void irq2();
@@ -56,117 +56,116 @@ extern "C" void irq13();
 extern "C" void irq14();
 extern "C" void irq15();
 
-extern "C" void lowlevel_dispatch_interrupt(REGS * _r) {
-  InterruptHandler::dispatch_interrupt(_r);
+extern "C" void lowlevel_dispatch_interrupt(REGS *_r) {
+    InterruptHandler::dispatch_interrupt(_r);
 }
 
 /*--------------------------------------------------------------------------*/
 /* LOCAL VARIABLES */
 /*--------------------------------------------------------------------------*/
 
-InterruptHandler * InterruptHandler::handler_table[InterruptHandler::IRQ_TABLE_SIZE];
-  
+InterruptHandler *InterruptHandler::handler_table[InterruptHandler::IRQ_TABLE_SIZE];
+
 /*--------------------------------------------------------------------------*/
 /* EXPORTED INTERRUPT DISPATCHER FUNCTIONS */
 /*--------------------------------------------------------------------------*/
 
 void InterruptHandler::init_dispatcher() {
 
-  /* -- INITIALIZE LOW-LEVEL INTERRUPT HANDLERS */
-  /*    Add any new ISRs to the IDT here using IDT::set_gate */
-  IDT::set_gate( 0+ IRQ_BASE, (unsigned) irq0, 0x08, 0x8E);
-  IDT::set_gate( 1+ IRQ_BASE, (unsigned) irq1, 0x08, 0x8E);
-  IDT::set_gate( 2+ IRQ_BASE, (unsigned) irq2, 0x08, 0x8E);
-  IDT::set_gate( 3+ IRQ_BASE, (unsigned) irq3, 0x08, 0x8E);
-  IDT::set_gate( 4+ IRQ_BASE, (unsigned) irq4, 0x08, 0x8E);
-  IDT::set_gate( 5+ IRQ_BASE, (unsigned) irq5, 0x08, 0x8E);
-  IDT::set_gate( 6+ IRQ_BASE, (unsigned) irq6, 0x08, 0x8E);
-  IDT::set_gate( 7+ IRQ_BASE, (unsigned) irq7, 0x08, 0x8E);
+    /* -- INITIALIZE LOW-LEVEL INTERRUPT HANDLERS */
+    /*    Add any new ISRs to the IDT here using IDT::set_gate */
+    IDT::set_gate(0 + IRQ_BASE, (unsigned) irq0, 0x08, 0x8E);
+    IDT::set_gate(1 + IRQ_BASE, (unsigned) irq1, 0x08, 0x8E);
+    IDT::set_gate(2 + IRQ_BASE, (unsigned) irq2, 0x08, 0x8E);
+    IDT::set_gate(3 + IRQ_BASE, (unsigned) irq3, 0x08, 0x8E);
+    IDT::set_gate(4 + IRQ_BASE, (unsigned) irq4, 0x08, 0x8E);
+    IDT::set_gate(5 + IRQ_BASE, (unsigned) irq5, 0x08, 0x8E);
+    IDT::set_gate(6 + IRQ_BASE, (unsigned) irq6, 0x08, 0x8E);
+    IDT::set_gate(7 + IRQ_BASE, (unsigned) irq7, 0x08, 0x8E);
 
-  IDT::set_gate( 8+ IRQ_BASE, (unsigned) irq8, 0x08, 0x8E);
-  IDT::set_gate( 9+ IRQ_BASE, (unsigned) irq9, 0x08, 0x8E);
-  IDT::set_gate(10+ IRQ_BASE, (unsigned)irq10, 0x08, 0x8E);
-  IDT::set_gate(11+ IRQ_BASE, (unsigned)irq11, 0x08, 0x8E);
-  IDT::set_gate(12+ IRQ_BASE, (unsigned)irq12, 0x08, 0x8E);
-  IDT::set_gate(13+ IRQ_BASE, (unsigned)irq13, 0x08, 0x8E);
-  IDT::set_gate(14+ IRQ_BASE, (unsigned)irq14, 0x08, 0x8E);
-  IDT::set_gate(15+ IRQ_BASE, (unsigned)irq15, 0x08, 0x8E);
+    IDT::set_gate(8 + IRQ_BASE, (unsigned) irq8, 0x08, 0x8E);
+    IDT::set_gate(9 + IRQ_BASE, (unsigned) irq9, 0x08, 0x8E);
+    IDT::set_gate(10 + IRQ_BASE, (unsigned) irq10, 0x08, 0x8E);
+    IDT::set_gate(11 + IRQ_BASE, (unsigned) irq11, 0x08, 0x8E);
+    IDT::set_gate(12 + IRQ_BASE, (unsigned) irq12, 0x08, 0x8E);
+    IDT::set_gate(13 + IRQ_BASE, (unsigned) irq13, 0x08, 0x8E);
+    IDT::set_gate(14 + IRQ_BASE, (unsigned) irq14, 0x08, 0x8E);
+    IDT::set_gate(15 + IRQ_BASE, (unsigned) irq15, 0x08, 0x8E);
 
-  /* -- INITIALIZE THE HIGH-LEVEL INTERRUPT HANDLER */
-  int i;
-  for(i = 0; i < IRQ_TABLE_SIZE; i++) {
-    handler_table[i] = NULL;
-  }
+    /* -- INITIALIZE THE HIGH-LEVEL INTERRUPT HANDLER */
+    int i;
+    for (i = 0; i < IRQ_TABLE_SIZE; i++) {
+        handler_table[i] = NULL;
+    }
 }
 
 bool InterruptHandler::generated_by_slave_PIC(unsigned int int_no) {
-  return int_no > 7;
+    return int_no > 7;
 }
 
-void InterruptHandler::dispatch_interrupt(REGS * _r) {
+void InterruptHandler::dispatch_interrupt(REGS *_r) {
 
-  /* -- INTERRUPT NUMBER */
-  unsigned int int_no = _r->int_no - IRQ_BASE;
+    /* -- INTERRUPT NUMBER */
+    unsigned int int_no = _r->int_no - IRQ_BASE;
 
-  //Console::puts("INTERRUPT DISPATCHER: int_no = ");
-  //Console::putui(int_no);
-  //Console::puts("\n");
+    //Console::puts("INTERRUPT DISPATCHER: int_no = ");
+    //Console::putui(int_no);
+    //Console::puts("\n");
 
-  assert((int_no >= 0) && (int_no < IRQ_TABLE_SIZE));
+    assert((int_no >= 0) && (int_no < IRQ_TABLE_SIZE));
 
-  /* -- HAS A HANDLER BEEN REGISTERED FOR THIS INTERRUPT NO? */ 
-        
-  InterruptHandler * handler = handler_table[int_no];
+    /* -- HAS A HANDLER BEEN REGISTERED FOR THIS INTERRUPT NO? */
 
-  if (!handler) {
-    /* --- NO DEFAULT HANDLER HAS BEEN REGISTERED. SIMPLY RETURN AN ERROR. */
-    Console::puts("INTERRUPT NO: ");
-    Console::puti(int_no);
+    InterruptHandler *handler = handler_table[int_no];
+
+    if (!handler) {
+        /* --- NO DEFAULT HANDLER HAS BEEN REGISTERED. SIMPLY RETURN AN ERROR. */
+        Console::puts("INTERRUPT NO: ");
+        Console::puti(int_no);
+        Console::puts("\n");
+        Console::puts("NO DEFAULT INTERRUPT HANDLER REGISTERED\n");
+        //    abort();
+    } else {
+        /* -- HANDLE THE INTERRUPT */
+        handler->handle_interrupt(_r);
+    }
+
+    /* This is an interrupt that was raised by the interrupt controller. We need
+         to send and end-of-interrupt (EOI) signal to the controller after the
+         interrupt has been handled. */
+
+    /* Check if the interrupt was generated by the slave interrupt controller.
+         If so, send an End-of-Interrupt (EOI) message to the slave controller. */
+
+    if (generated_by_slave_PIC(int_no)) {
+        Machine::outportb(0xA0, 0x20);
+    }
+
+    /* Send an EOI message to the master interrupt controller. */
+    Machine::outportb(0x20, 0x20);
+
+}
+
+void InterruptHandler::register_handler(unsigned int _irq_code,
+                                        InterruptHandler *_handler) {
+    assert(_irq_code >= 0 && _irq_code < IRQ_TABLE_SIZE);
+
+    handler_table[_irq_code] = _handler;
+
+    Console::puts("Installed interrupt handler at IRQ ");
+    Console::putui(_irq_code);
     Console::puts("\n");
-    Console::puts("NO DEFAULT INTERRUPT HANDLER REGISTERED\n");
-    //    abort();
-  }
-  else {
-    /* -- HANDLE THE INTERRUPT */
-    handler->handle_interrupt(_r);
-  }
-
-  /* This is an interrupt that was raised by the interrupt controller. We need 
-       to send and end-of-interrupt (EOI) signal to the controller after the 
-       interrupt has been handled. */
-
-  /* Check if the interrupt was generated by the slave interrupt controller. 
-       If so, send an End-of-Interrupt (EOI) message to the slave controller. */
-
-  if (generated_by_slave_PIC(int_no)) {
-    Machine::outportb(0xA0, 0x20);
-  }
-
-  /* Send an EOI message to the master interrupt controller. */
-  Machine::outportb(0x20, 0x20);
-    
-}
-
-void InterruptHandler::register_handler(unsigned int        _irq_code,
-		                        InterruptHandler  * _handler) {
-  assert(_irq_code >= 0 && _irq_code < IRQ_TABLE_SIZE);
-
-  handler_table[_irq_code] = _handler;
-
-  Console::puts("Installed interrupt handler at IRQ "); 
-  Console::putui(_irq_code); 
-  Console::puts("\n");
 
 }
 
 void InterruptHandler::deregister_handler(unsigned int _irq_code) {
-  
-  assert(_irq_code >= 0 && _irq_code < IRQ_TABLE_SIZE);
 
-  handler_table[_irq_code] = NULL;
+    assert(_irq_code >= 0 && _irq_code < IRQ_TABLE_SIZE);
 
-  Console::puts("UNINSTALLED interrupt handler at IRQ "); 
-  Console::putui(_irq_code); 
-  Console::puts("\n");
+    handler_table[_irq_code] = NULL;
+
+    Console::puts("UNINSTALLED interrupt handler at IRQ ");
+    Console::putui(_irq_code);
+    Console::puts("\n");
 
 }
