@@ -1,0 +1,5 @@
+.idea
+*.o
+kernel.elf
+bochsout.txt
+dev_kernel_grub.img
