@@ -1,8 +1,8 @@
 /*
  File: scheduler.C
  
- Author:
- Date  :
+ Author: Chrysanthos Pepi
+ Date  : 24 MAR 2021
  
  */
 
@@ -46,22 +46,48 @@
 /*--------------------------------------------------------------------------*/
 
 Scheduler::Scheduler() {
-    assert(false);
     Console::puts("Constructed Scheduler.\n");
 }
 
 void Scheduler::yield() {
-    assert(false);
+    if (Machine::interrupts_enabled())
+        Machine::disable_interrupts();
+
+    if (ready_queue.isEmpty())
+        assert(false)
+
+    Thread *_thread = ready_queue.dequeue();
+
+//    Console::puts("Thread ");
+//    Console::puti(_thread->ThreadId());
+//    Console::puts(" acquired CPU\n");
+
+    Thread::dispatch_to(_thread);
+
+    if (!Machine::interrupts_enabled())
+        Machine::enable_interrupts();
 }
 
 void Scheduler::resume(Thread *_thread) {
-    assert(false);
+    if (Machine::interrupts_enabled())
+        Machine::disable_interrupts();
+
+    ready_queue.enqueue(_thread);
+
+    if (!Machine::interrupts_enabled())
+        Machine::enable_interrupts();
 }
 
 void Scheduler::add(Thread *_thread) {
-    assert(false);
+    resume(_thread);
 }
 
 void Scheduler::terminate(Thread *_thread) {
-    assert(false);
+    if (Machine::interrupts_enabled())
+        Machine::disable_interrupts();
+
+    ready_queue.deleteThread(_thread);
+
+    if (!Machine::interrupts_enabled())
+        Machine::enable_interrupts();
 }

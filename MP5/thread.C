@@ -22,7 +22,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+#define _ROUND_ROBIN_
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -37,10 +37,20 @@
 
 #include "threads_low.H"
 
+#ifndef _ROUND_ROBIN_
+#include "scheduler.H"
+#else
+#include "RRScheduler.H"
+#endif
+
 /*--------------------------------------------------------------------------*/
 /* EXTERNS */
 /*--------------------------------------------------------------------------*/
-
+#ifndef _ROUND_ROBIN_
+extern Scheduler *SYSTEM_SCHEDULER;
+#else
+extern RRScheduler *SYSTEM_SCHEDULER;
+#endif
 Thread *current_thread = 0;
 /* Pointer to the currently running thread. This is used by the scheduler,
    for example. */
@@ -73,7 +83,12 @@ static void thread_shutdown() {
        This is a bit complicated because the thread termination interacts with the scheduler.
      */
 
-    assert(false);
+    SYSTEM_SCHEDULER->terminate(current_thread);
+    delete[] current_thread;
+#ifdef _ROUND_ROBIN_
+    SYSTEM_SCHEDULER->eoq_timer->reset_quantum();
+#endif
+    SYSTEM_SCHEDULER->yield();
     /* Let's not worry about it for now. 
        This means that we should have non-terminating thread functions. 
     */
@@ -81,7 +96,7 @@ static void thread_shutdown() {
 
 static void thread_start() {
     /* This function is used to release the thread for execution in the ready queue. */
-
+    Machine::enable_interrupts();
     /* We need to add code, but it is probably nothing more than enabling interrupts. */
 }
 

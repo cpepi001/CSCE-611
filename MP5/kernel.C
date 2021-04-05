@@ -23,7 +23,7 @@
 
 /* -- COMMENT/UNCOMMENT THE FOLLOWING LINE TO EXCLUDE/INCLUDE SCHEDULER CODE */
 
-//#define _USES_SCHEDULER_
+#define _USES_SCHEDULER_
 /* This macro is defined when we want to force the code below to use
    a scheduler.
    Otherwise, no scheduler is used, and the threads pass control to each
@@ -33,12 +33,14 @@
 
 /* -- UNCOMMENT THE FOLLOWING LINE TO MAKE THREADS TERMINATING */
 
-//#define _TERMINATING_FUNCTIONS_
+#define _TERMINATING_FUNCTIONS_
 /* This macro is defined when we want the thread functions to return, and so
    terminate their thread.
    Otherwise, the thread functions don't return, and the threads run forever.
 */
 
+#define _ROUND_ROBIN_
+#define _EOQ_ 500
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
@@ -59,7 +61,13 @@
 #include "thread.H"          /* THREAD MANAGEMENT */
 
 #ifdef _USES_SCHEDULER_
+
+#ifndef _ROUND_ROBIN_
 #include "scheduler.H"
+#else
+#include "RRScheduler.H"
+#endif
+
 #endif
 
 /*--------------------------------------------------------------------------*/
@@ -102,8 +110,12 @@ void operator delete[](void *p) {
 
 #ifdef _USES_SCHEDULER_
 
+#ifndef _ROUND_ROBIN_
 /* -- A POINTER TO THE SYSTEM SCHEDULER */
 Scheduler * SYSTEM_SCHEDULER;
+#else
+RRScheduler * SYSTEM_SCHEDULER;
+#endif
 
 #endif
 
@@ -122,7 +134,13 @@ void pass_on_CPU(Thread *_to_thread) {
        we pre-empt the current thread by putting it onto the ready
        queue and yielding the CPU. */
 
+//    Console::puts("Thread ");
+//    Console::puti(Thread::CurrentThread()->ThreadId());
+//    Console::puts(" gave the CPU\n");
     SYSTEM_SCHEDULER->resume(Thread::CurrentThread());
+#ifdef _ROUND_ROBIN_
+    SYSTEM_SCHEDULER->eoq_timer->reset_quantum();
+#endif
     SYSTEM_SCHEDULER->yield();
 #endif
 }
@@ -150,16 +168,21 @@ void fun1() {
     for (int j = 0;; j++)
 #endif
     {
-        Console::puts("FUN 1 IN BURST[");
-        Console::puti(j);
-        Console::puts("]\n");
+        if (j % 10 == 0 && j != 0) {
+            Console::puts("I'm fun1 and I'm still running..\n");
+        }
+
+//        Console::puts("FUN 1 IN BURST[");
+//        Console::puti(j);
+//        Console::puts("]\n");
         for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 1: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+//            Console::puts("FUN 1: TICK [");
+//            Console::puti(i);
+//            Console::puts("]\n");
         }
         pass_on_CPU(thread2);
     }
+    Console::puts("FUN 1 TERMINATED!\n");
 }
 
 
@@ -175,16 +198,21 @@ void fun2() {
     for (int j = 0;; j++)
 #endif
     {
-        Console::puts("FUN 2 IN BURST[");
-        Console::puti(j);
-        Console::puts("]\n");
+        if (j % 10 == 0 && j != 0) {
+            Console::puts("I'm fun2 and I'm still running..\n");
+        }
+
+//        Console::puts("FUN 2 IN BURST[");
+//        Console::puti(j);
+//        Console::puts("]\n");
         for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 2: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+//            Console::puts("FUN 2: TICK [");
+//            Console::puti(i);
+//            Console::puts("]\n");
         }
         pass_on_CPU(thread3);
     }
+    Console::puts("FUN 2 TERMINATED!\n");
 }
 
 void fun3() {
@@ -194,13 +222,17 @@ void fun3() {
     Console::puts("FUN 3 INVOKED!\n");
 
     for (int j = 0;; j++) {
-        Console::puts("FUN 3 IN BURST[");
-        Console::puti(j);
-        Console::puts("]\n");
-        for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 3: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+        if (j % 10 == 0 && j != 0) {
+            Console::puts("I'm fun3 and I'm still running..\n");
+        }
+
+//        Console::puts("FUN 3 IN BURST[");
+//        Console::puti(j);
+//        Console::puts("]\n");
+        for (int i = 0; i < 1000000; i++) {
+//            Console::puts("FUN 3: TICK [");
+//            Console::puti(i);
+//            Console::puts("]\n");
         }
         pass_on_CPU(thread4);
     }
@@ -213,13 +245,17 @@ void fun4() {
     Console::puts("FUN 4 INVOKED!\n");
 
     for (int j = 0;; j++) {
-        Console::puts("FUN 4 IN BURST[");
-        Console::puti(j);
-        Console::puts("]\n");
-        for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 4: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+        if (j % 10 == 0 && j != 0) {
+            Console::puts("I'm fun4 and I'm still running..\n");
+        }
+
+//        Console::puts("FUN 4 IN BURST[");
+//        Console::puti(j);
+//        Console::puts("]\n");
+        for (int i = 0; i < 100000000; i++) {
+//            Console::puts("FUN 4: TICK [");
+//            Console::puti(i);
+//            Console::puts("]\n");
         }
         pass_on_CPU(thread1);
     }
@@ -250,6 +286,25 @@ int main() {
 
     ExceptionHandler::register_handler(0, &dbz_handler);
 
+    class GPE_Handler : public ExceptionHandler {
+    public:
+        virtual void handle_exception(REGS *_regs) {
+            Console::puts("General Protection Fault Exception!\n");
+            for (;;);
+        }
+    } gpe_handler;
+
+    ExceptionHandler::register_handler(13, &gpe_handler);
+
+    class IOE_Handler : public ExceptionHandler {
+    public:
+        virtual void handle_exception(REGS *_regs) {
+            Console::puts("Invalid Opcode Exception!\n");
+            for (;;);
+        }
+    } ioe_handler;
+
+    ExceptionHandler::register_handler(6, &ioe_handler);
 
     /* -- INITIALIZE MEMORY -- */
     /*    NOTE: We don't have paging enabled in this MP. */
@@ -272,15 +327,20 @@ int main() {
                  we enable interrupts correctly. If we forget to do it,
                  the timer "dies". */
 
+#ifndef _ROUND_ROBIN_
     SimpleTimer timer(100); /* timer ticks every 10ms. */
     InterruptHandler::register_handler(0, &timer);
     /* The Timer is implemented as an interrupt handler. */
+#endif
 
 #ifdef _USES_SCHEDULER_
 
     /* -- SCHEDULER -- IF YOU HAVE ONE -- */
- 
+#ifndef _ROUND_ROBIN_
     SYSTEM_SCHEDULER = new Scheduler();
+#else
+    SYSTEM_SCHEDULER = new RRScheduler(_EOQ_);
+#endif
 
 #endif
 
