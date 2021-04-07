@@ -13,7 +13,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -30,16 +30,16 @@
 /*--------------------------------------------------------------------------*/
 
 SimpleTimer::SimpleTimer(int _hz) {
-  /* How long has the system been running? */
-  seconds =  0; 
-  ticks   =  0; /* ticks since last "seconds" update.    */
+    /* How long has the system been running? */
+    seconds = 0;
+    ticks = 0; /* ticks since last "seconds" update.    */
 
-  /* At what frequency do we update the ticks counter? */
-  /* hz      = 18; */
-                /* Actually, by defaults it is 18.22Hz.
-                   In this way, a 16-bit counter wraps
-                   around every hour.                    */
-  set_frequency(_hz);
+    /* At what frequency do we update the ticks counter? */
+    /* hz      = 18; */
+    /* Actually, by defaults it is 18.22Hz.
+       In this way, a 16-bit counter wraps
+       around every hour.                    */
+    set_frequency(_hz);
 
 }
 
@@ -58,8 +58,7 @@ void SimpleTimer::handle_interrupt(REGS *_r) {
     ticks++;
 
     /* Whenever a second is over, we update counter accordingly. */
-    if (ticks >= hz )
-    {
+    if (ticks >= hz) {
         seconds++;
         ticks = 0;
         Console::puts("One second has passed\n");
@@ -78,23 +77,23 @@ void SimpleTimer::set_frequency(int _hz) {
     Machine::outportb(0x40, divisor >> 8);        /* Set high byte of divisor.         */
 }
 
-void SimpleTimer::current(unsigned long * _seconds, int * _ticks) {
+void SimpleTimer::current(unsigned long *_seconds, int *_ticks) {
 /* Return the current "time" since the system started. */
 
-  *_seconds = seconds;
-  *_ticks   = ticks;
+    *_seconds = seconds;
+    *_ticks = ticks;
 }
 
 void SimpleTimer::wait(unsigned long _seconds) {
 /* Wait for a particular time to be passed. This is based on busy looping! */
 
     unsigned long now_seconds;
-    int           now_ticks;
+    int now_ticks;
     current(&now_seconds, &now_ticks);
 
     unsigned long then_seconds = now_seconds + _seconds;
 
-    while((seconds <= then_seconds) && (ticks < now_ticks));
+    while ((seconds <= then_seconds) && (ticks < now_ticks));
 }
 
 

@@ -23,25 +23,25 @@
 #define _GDT_H_
 
 /*--------------------------------------------------------------------------*/
-/* GDT */ 
+/* GDT */
 /*--------------------------------------------------------------------------*/
 
 class GDT {
 
 private:
 
-  /* Use this function to set up an entry in the GDT. */
-  static void set_gate(int num, 
-                       unsigned long base, unsigned long limit, 
-                       unsigned char access, unsigned char gran);
+    /* Use this function to set up an entry in the GDT. */
+    static void set_gate(int num,
+                         unsigned long base, unsigned long limit,
+                         unsigned char access, unsigned char gran);
 
 public:
 
-  static const unsigned int SIZE = 3;
+    static const unsigned int SIZE = 3;
 
-  static void init();
-  /* Initialize the GDT to have a null segment, a code segment, 
-     and one data segment. */
+    static void init();
+    /* Initialize the GDT to have a null segment, a code segment,
+       and one data segment. */
 
 };
 

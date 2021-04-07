@@ -15,7 +15,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -30,16 +30,16 @@
 /* _assert() FUNCTION: gets called when assert() macro fails. */
 /*--------------------------------------------------------------------------*/
 
-void _assert (const char* _file, const int _line, const char* _message )  {
-  /* Prints current file, line number, and failed assertion. */
-  char temp[15];
-  Console::puts("Assertion failed at file: ");
-  Console::puts(_file);
-  Console::puts(" line: ");
-  int2str(_line, temp);
-  Console::puts(temp);
-  Console::puts(" assertion: ");
-  Console::puts(_message);
-  Console::puts("\n");
-  abort();
+void _assert(const char *_file, const int _line, const char *_message) {
+    /* Prints current file, line number, and failed assertion. */
+    char temp[15];
+    Console::puts("Assertion failed at file: ");
+    Console::puts(_file);
+    Console::puts(" line: ");
+    int2str(_line, temp);
+    Console::puts(temp);
+    Console::puts(" assertion: ");
+    Console::puts(_message);
+    Console::puts("\n");
+    abort();
 }/* end _assert */

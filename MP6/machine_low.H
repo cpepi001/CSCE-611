@@ -18,13 +18,13 @@
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
- /* (none) */
+/* (none) */
 
 /*--------------------------------------------------------------------------*/
 /* LOW-LEVER CPU OPERATIONS */
 /*--------------------------------------------------------------------------*/
 
-extern "C" unsigned long get_EFLAGS(); 
+extern "C" unsigned long get_EFLAGS();
 /* Return value of the EFLAGS status register. */
 
 #endif

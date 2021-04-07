@@ -14,7 +14,7 @@
 
 #ifndef __assert_H__
 #define __assert_H__
- 
+
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
@@ -22,19 +22,19 @@
 #include "utils.H"
 
 /*--------------------------------------------------------------------------*/
-/* DATA STRUCTURES */ 
+/* DATA STRUCTURES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
-/* CONSTANTS */ 
+/* CONSTANTS */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
-/* "ASSERT" MACRO */ 
+/* "ASSERT" MACRO */
 /*--------------------------------------------------------------------------*/
 
 /* NOTE: The "assert" macros can be turned off by giving the -DNDEBUG
@@ -44,12 +44,12 @@
 #  undef assert
 #endif
 
-void _assert ( const char* _file, const int _line, const char* _message );
- 
-#ifdef NDEBUG        
+void _assert(const char *_file, const int _line, const char *_message);
+
+#ifdef NDEBUG
 #  define assert( m ) ( ( void ) 0 )
 #else
-#  define assert( m )                           \
+#  define assert(m)                           \
    if ( !(m) ) _assert( __FILE__, __LINE__, #m );
 #endif
 

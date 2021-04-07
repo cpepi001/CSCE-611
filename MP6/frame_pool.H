@@ -27,7 +27,7 @@
 /* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
-/* DATA STRUCTURES */ 
+/* DATA STRUCTURES */
 /*--------------------------------------------------------------------------*/
 
 /* -- (none) -- */
@@ -40,18 +40,21 @@ class FramePool {
 
 public:
 
-   FramePool();   
-   /* Initializes the data structures needed for the management of the 
-      free frame pool. This function must be called before the paging system 
-      is initialized. */ 
+    FramePool();
 
-   unsigned long get_frame(); 
-   /* Allocates a frame from the frame pool. If successful, returns the physical 
-      address of the frame. If fails, returns 0x0. */ 
+    /* Initializes the data structures needed for the management of the
+       free frame pool. This function must be called before the paging system
+       is initialized. */
 
-   void release_frame(unsigned long _frame_address); 
-   /* Releases frame back to the given frame pool. 
-      The frame is identified by the physical address. */ 
+    unsigned long get_frame();
+
+    /* Allocates a frame from the frame pool. If successful, returns the physical
+       address of the frame. If fails, returns 0x0. */
+
+    void release_frame(unsigned long _frame_address);
+    /* Releases frame back to the given frame pool.
+       The frame is identified by the physical address. */
 
 };
+
 #endif

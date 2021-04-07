@@ -37,27 +37,27 @@ static unsigned long next_free_frame;
 /*--------------------------------------------------------------------------*/
 
 FramePool::FramePool() {
-  next_free_frame = 0x200000; /* 2 MB */
-}     
+    next_free_frame = 0x200000; /* 2 MB */
+}
 
 
 unsigned long FramePool::get_frame() {
 /* Allocates a frame from the frame pool. If successful, returns the physical 
-   address of the frame. If fails, returns 0x0. */ 
+   address of the frame. If fails, returns 0x0. */
 
 //  Console::puts("FramePool:next_free_frame = "); Console::putui(next_free_frame); Console::puts("\n");
-  unsigned long new_frame = next_free_frame;
+    unsigned long new_frame = next_free_frame;
 
-  next_free_frame += Machine::PAGE_SIZE;
+    next_free_frame += Machine::PAGE_SIZE;
 
-  return new_frame;
+    return new_frame;
 
 }
- 
 
-void FramePool::release_frame(unsigned long   _frame_address) {
+
+void FramePool::release_frame(unsigned long _frame_address) {
 /* Releases frame back to the given frame pool. 
-   The frame is identified by the physical address. */ 
+   The frame is identified by the physical address. */
 
-   /* FOR NOW WE DON'T RELEASE FRAMES. */
+    /* FOR NOW WE DON'T RELEASE FRAMES. */
 }

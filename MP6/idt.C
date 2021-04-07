@@ -17,7 +17,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -29,18 +29,17 @@
 #include "console.H"
 
 /*--------------------------------------------------------------------------*/
-/* EXTERNS */ 
+/* EXTERNS */
 /*--------------------------------------------------------------------------*/
 
 /* Used to load our IDT, defined in 'idt_low.s' */
 extern "C" void idt_load();
 
 /*--------------------------------------------------------------------------*/
-/* DATA STRUCTURES */ 
+/* DATA STRUCTURES */
 /*--------------------------------------------------------------------------*/
 
-struct idt_entry
-{
+struct idt_entry {
     unsigned short base_lo;
     unsigned short sel;
     unsigned char always0;
@@ -48,8 +47,7 @@ struct idt_entry
     unsigned short base_hi;
 } __attribute__((packed));
 
-struct idt_ptr
-{
+struct idt_ptr {
     unsigned short limit;
     unsigned int base;
 } __attribute__((packed));
@@ -73,11 +71,11 @@ struct idt_ptr idtp;
 /*--------------------------------------------------------------------------*/
 
 /* Use this function to set an entry in the IDT. */
-void IDT::set_gate(unsigned char num, unsigned long base, 
+void IDT::set_gate(unsigned char num, unsigned long base,
                    unsigned short sel, unsigned char flags) {
 
     Console::puts("Installing handler in IDT position ");
-    Console::puti((int)num);
+    Console::puti((int) num);
     Console::puts("\n");
 
     /* The interrupt routine's base address */
@@ -95,14 +93,14 @@ void IDT::set_gate(unsigned char num, unsigned long base,
 /* Installs the IDT */
 void IDT::init() {
 
-  /* Sets the special IDT pointer up. */
-    idtp.limit = (sizeof (struct idt_entry) * 256) - 1;
-    idtp.base = (unsigned int)&idt;
+    /* Sets the special IDT pointer up. */
+    idtp.limit = (sizeof(struct idt_entry) * 256) - 1;
+    idtp.base = (unsigned int) &idt;
 
-  /* Clear out the entire IDT, initializing it to zeros. */
+    /* Clear out the entire IDT, initializing it to zeros. */
     memset(&idt, 0, sizeof(struct idt_entry) * 256);
 
 
-  /* Points the processor's internal register to the new IDT */
-  idt_load();
+    /* Points the processor's internal register to the new IDT */
+    idt_load();
 }

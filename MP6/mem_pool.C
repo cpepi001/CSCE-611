@@ -27,26 +27,26 @@
 /* M e m o r y   P o o l  */
 /*--------------------------------------------------------------------------*/
 
-MemPool::MemPool(FramePool * _frame_pool, int _n_frames) {
-  Console::puts("Allocating Memory Pool... ");
-  start_address = _frame_pool->get_frame();
-  for (int i = 1; i < _n_frames; i++) {
-      unsigned long next_frame_addr = _frame_pool->get_frame();
-  }
-  Console::puts("done\n");
-}     
+MemPool::MemPool(FramePool *_frame_pool, int _n_frames) {
+    Console::puts("Allocating Memory Pool... ");
+    start_address = _frame_pool->get_frame();
+    for (int i = 1; i < _n_frames; i++) {
+        unsigned long next_frame_addr = _frame_pool->get_frame();
+    }
+    Console::puts("done\n");
+}
 
 
 unsigned long MemPool::allocate(unsigned long _size) {
-  
-  unsigned long return_address = start_address;
-  start_address += _size;
 
-  return return_address;
+    unsigned long return_address = start_address;
+    start_address += _size;
+
+    return return_address;
 
 }
- 
 
-void MemPool::release(unsigned long   _start_address) {
-   /* FOR NOW WE DON'T RELEASE MEMORY. */
+
+void MemPool::release(unsigned long _start_address) {
+    /* FOR NOW WE DON'T RELEASE MEMORY. */
 }

@@ -22,7 +22,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -42,7 +42,7 @@
 /* EXTERNS */
 /*--------------------------------------------------------------------------*/
 
-Thread * current_thread = 0;
+Thread *current_thread = 0;
 /* Pointer to the currently running thread. This is used by the scheduler,
    for example. */
 
@@ -81,19 +81,19 @@ static void thread_shutdown() {
 }
 
 static void thread_start() {
-     /* This function is used to release the thread for execution in the ready queue. */
-    
-     /* We need to add code, but it is probably nothing more than enabling interrupts. */
+    /* This function is used to release the thread for execution in the ready queue. */
+
+    /* We need to add code, but it is probably nothing more than enabling interrupts. */
 }
 
-void Thread::setup_context(Thread_Function _tfunction){
+void Thread::setup_context(Thread_Function _tfunction) {
     /* Sets up the initial context for the given kernel-only thread. 
        The thread is supposed the call the function _tfunction upon start.
     */
-  
+
     /* The approach and most of the code in this function are borrowed from 
        David H. Hovemeyer <daveho@cs.umd.edu> */
- 
+
     /* -- HERE WE PUSH THE ITEMS ON THE STACK THAT ARE NEEDED FOR THE
           THREAD TO START EXECUTION AND FOR IT TO TERMINATE CORRECTLY
           WHEN THE THREAD FUNCTION RETURNS. */
@@ -151,7 +151,9 @@ void Thread::setup_context(Thread_Function _tfunction){
     push(0);  /* fs */
     push(0);  /* gs */
 
-    Console::puts("esp = "); Console::putui((unsigned int)esp); Console::puts("\n");
+    Console::puts("esp = ");
+    Console::putui((unsigned int) esp);
+    Console::puts("\n");
 
     Console::puts("done\n");
 }
@@ -160,7 +162,7 @@ void Thread::setup_context(Thread_Function _tfunction){
 /* -- Thread CONSTRUCTOR -- */
 /*--------------------------------------------------------------------------*/
 
-Thread::Thread(Thread_Function _tf, char * _stack, unsigned int _stack_size) {
+Thread::Thread(Thread_Function _tf, char *_stack, unsigned int _stack_size) {
 /* Construct a new thread and initialize its stack. The thread is then ready to run.
    (The dispatcher is implemented in file "thread_scheduler".) 
 */
@@ -168,17 +170,17 @@ Thread::Thread(Thread_Function _tf, char * _stack, unsigned int _stack_size) {
     /* -- INITIALIZE THREAD */
 
     /* ---- THREAD ID */
-   
+
     thread_id = nextFreePid++;
 
     /* ---- STACK POINTER */
 
-    esp = (char*)((unsigned int)_stack + _stack_size);
+    esp = (char *) ((unsigned int) _stack + _stack_size);
     /* RECALL: The stack starts at the end of the reserved stack memory area. */
 
     stack = _stack;
     stack_size = _stack_size;
-    
+
     /* -- INITIALIZE THE STACK OF THE THREAD */
 
     setup_context(_tf);
@@ -189,7 +191,7 @@ int Thread::ThreadId() {
     return thread_id;
 }
 
-void Thread::dispatch_to(Thread * _thread) {
+void Thread::dispatch_to(Thread *_thread) {
 /* Context-switch to the given thread. Calls the low-level context switch code 
    in thread_low.asm.
    NOTE: This call does not return until after the current thread is switched back in.
@@ -204,9 +206,9 @@ void Thread::dispatch_to(Thread * _thread) {
 
     /* The call does not return until after the thread is context-switched back in. */
 }
-       
 
-Thread * Thread::CurrentThread() {
+
+Thread *Thread::CurrentThread() {
 /* Return the currently running thread. */
     return current_thread;
 }
