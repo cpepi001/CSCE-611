@@ -19,7 +19,7 @@
 
 /* -- COMMENT/UNCOMMENT THE FOLLOWING LINE TO EXCLUDE/INCLUDE SCHEDULER CODE */
 
-//#define _USES_SCHEDULER_
+#define _USES_SCHEDULER_
 /* This macro is defined when we want to force the code below to use 
    a scheduler.
    Otherwise, no scheduler is used, and the threads pass control to each 
@@ -52,8 +52,7 @@
 #include "scheduler.H"      /* WE WILL NEED A SCHEDULER WITH BlockingDisk */
 #endif
 
-#include "simple_disk.H"    /* DISK DEVICE */
-/* YOU MAY NEED TO INCLUDE blocking_disk.H
+#include "blocking_disk.H"    /* DISK DEVICE */
 /*--------------------------------------------------------------------------*/
 /* MEMORY MANAGEMENT */
 /*--------------------------------------------------------------------------*/
@@ -95,7 +94,7 @@ void operator delete[](void *p) {
 #ifdef _USES_SCHEDULER_
 
 /* -- A POINTER TO THE SYSTEM SCHEDULER */
-Scheduler * SYSTEM_SCHEDULER;
+Scheduler *SYSTEM_SCHEDULER;
 
 #endif
 
@@ -104,7 +103,7 @@ Scheduler * SYSTEM_SCHEDULER;
 /*--------------------------------------------------------------------------*/
 
 /* -- A POINTER TO THE SYSTEM DISK */
-SimpleDisk *SYSTEM_DISK;
+BlockingDisk *SYSTEM_DISK;
 
 #define SYSTEM_DISK_SIZE (10 MB)
 
@@ -150,21 +149,23 @@ void fun1() {
     Console::puts("FUN 1 INVOKED!\n");
 
     for (int j = 0;; j++) {
+        if (j % 10 == 0 && j != 0) {
+            Console::puts("I'm fun1 and I'm still running..\n");
+        }
 
-        Console::puts("FUN 1 IN ITERATION[");
-        Console::puti(j);
-        Console::puts("]\n");
+//        Console::puts("FUN 1 IN ITERATION[");
+//        Console::puti(j);
+//        Console::puts("]\n");
 
         for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 1: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+//            Console::puts("FUN 1: TICK [");
+//            Console::puti(i);
+//            Console::puts("]\n");
         }
 
         pass_on_CPU(thread2);
     }
 }
-
 
 void fun2() {
     Console::puts("THREAD: ");
@@ -179,20 +180,25 @@ void fun2() {
 
     for (int j = 0;; j++) {
 
-        Console::puts("FUN 2 IN ITERATION[");
-        Console::puti(j);
-        Console::puts("]\n");
+//        Console::puts("FUN 2 IN ITERATION[");
+//        Console::puti(j);
+//        Console::puts("]\n");
 
         /* -- Read */
-        Console::puts("Reading a block from disk...\n");
+        Console::puts("FUN2: Reading ");
+        Console::puti(read_block);
+        Console::puts(" block from disk...\n");
         SYSTEM_DISK->read(read_block, buf);
 
         /* -- Display */
         for (int i = 0; i < DISK_BLOCK_SIZE; i++) {
             Console::putch(buf[i]);
         }
+        Console::puts("\n");
 
-        Console::puts("Writing a block to disk...\n");
+        Console::puts("FUN2: Writing ");
+        Console::puti(write_block);
+        Console::puts(" block to disk...\n");
         SYSTEM_DISK->write(write_block, buf);
 
         /* -- Move to next block */
@@ -212,15 +218,18 @@ void fun3() {
     Console::puts("FUN 3 INVOKED!\n");
 
     for (int j = 0;; j++) {
+        if (j % 10 == 0 && j != 0) {
+            Console::puts("I'm fun3 and I'm still running..\n");
+        }
 
-        Console::puts("FUN 3 IN BURST[");
-        Console::puti(j);
-        Console::puts("]\n");
+//        Console::puts("FUN 3 IN BURST[");
+//        Console::puti(j);
+//        Console::puts("]\n");
 
         for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 3: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+//            Console::puts("FUN 3: TICK [");
+//            Console::puti(i);
+//            Console::puts("]\n");
         }
 
         pass_on_CPU(thread4);
@@ -232,19 +241,87 @@ void fun4() {
     Console::puti(Thread::CurrentThread()->ThreadId());
     Console::puts("\n");
 
+    Console::puts("FUN 4 INVOKED!\n");
+
+    unsigned char buf[DISK_BLOCK_SIZE];
+    int read_block = 1;
+    int write_block = 0;
+
     for (int j = 0;; j++) {
 
-        Console::puts("FUN 4 IN BURST[");
-        Console::puti(j);
-        Console::puts("]\n");
+//        Console::puts("FUN 4 IN ITERATION[");
+//        Console::puti(j);
+//        Console::puts("]\n");
 
-        for (int i = 0; i < 10; i++) {
-            Console::puts("FUN 4: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+        /* -- Read */
+        Console::puts("FUN4: Reading ");
+        Console::puti(read_block);
+        Console::puts(" block from disk...\n");
+        SYSTEM_DISK->read(read_block, buf);
+
+        /* -- Display */
+        for (int i = 0; i < DISK_BLOCK_SIZE; i++) {
+            Console::putch(buf[i]);
         }
+        Console::puts("\n");
 
+        Console::puts("FUN4: Writing ");
+        Console::puti(write_block);
+        Console::puts(" block to disk...\n");
+        SYSTEM_DISK->write(write_block, buf);
+
+        /* -- Move to next block */
+        write_block = read_block;
+        read_block = (read_block + 1) % 10;
+
+        /* -- Give up the CPU */
         pass_on_CPU(thread1);
+    }
+}
+
+void disk_test() {
+    unsigned char message[DISK_BLOCK_SIZE] = "Far far away, behind the word mountains, far from the countries Vokalia"
+                                             " and Consonantia, there live the blind texts. Separated they live in"
+                                             " Bookmarksgrove right at the coast of the Semantics, a large language"
+                                             " ocean. A small river named Duden flows by their place and supplies it"
+                                             " with the necessary regelialia. It is a paradisematic country, in which"
+                                             " roasted parts of sentences fly into your mouth. Even the all-powerful"
+                                             " Pointing has no control about the blind texts it is an almost"
+                                             " unorthographic life One day.\n";
+    int read_block = 0;
+    int write_block = 0;
+    unsigned char buf[DISK_BLOCK_SIZE];
+
+    for (int i = 0; i < 10; ++i) {
+        SYSTEM_DISK->write(i, message);
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        for (int j = DISK_BLOCK_SIZE; j >= 0; j--) {
+            /* -- Read */
+            SYSTEM_DISK->read(read_block, buf);
+
+            for (int k = j; k < DISK_BLOCK_SIZE; ++k) {
+                if (buf[k] == NULL)
+                    break;
+                buf[k] = NULL;
+            }
+
+            /* -- Write */
+            SYSTEM_DISK->write(write_block, buf);
+        }
+        read_block++;
+        write_block++;
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        SYSTEM_DISK->read(i, buf);
+        if (buf[i] != NULL) {
+            Console::puts("Test fail at block ");
+            Console::puti(i);
+            Console::puts("\n");
+            assert(false)
+        }
     }
 }
 
@@ -301,14 +378,18 @@ int main() {
 #ifdef _USES_SCHEDULER_
 
     /* -- SCHEDULER -- IF YOU HAVE ONE -- */
-  
+
     SYSTEM_SCHEDULER = new Scheduler();
 
 #endif
 
     /* -- DISK DEVICE -- */
 
-    SYSTEM_DISK = new SimpleDisk(MASTER, SYSTEM_DISK_SIZE);
+    SYSTEM_DISK = new BlockingDisk(MASTER, SYSTEM_DISK_SIZE);
+    SYSTEM_SCHEDULER->add_disk(SYSTEM_DISK);
+
+    //Let's test the disk
+//    disk_test();
 
     /* NOTE: The timer chip starts periodically firing as 
              soon as we enable interrupts.

@@ -1,8 +1,8 @@
 /*
      File        : blocking_disk.c
 
-     Author      : 
-     Modified    : 
+     Author      : Chrysanthos Pepi
+     Modified    : 08 APR 21
 
      Description : 
 
@@ -21,7 +21,13 @@
 #include "assert.H"
 #include "utils.H"
 #include "console.H"
+#include "scheduler.H"
 #include "blocking_disk.H"
+/*--------------------------------------------------------------------------*/
+/* SCHEDULER */
+/*--------------------------------------------------------------------------*/
+
+extern Scheduler *SYSTEM_SCHEDULER;
 
 /*--------------------------------------------------------------------------*/
 /* CONSTRUCTOR */
@@ -29,6 +35,32 @@
 
 BlockingDisk::BlockingDisk(DISK_ID _disk_id, unsigned int _size)
         : SimpleDisk(_disk_id, _size) {
+
+}
+
+Thread *BlockingDisk::get_blocked_thread() {
+    return blocked_queue.dequeue();
+}
+
+int BlockingDisk::is_blocked_queue_empty() {
+    return blocked_queue.is_empty();
+}
+
+void BlockingDisk::wait_until_ready() {
+    if (!is_ready()) {
+        Thread *thread = Thread::CurrentThread();
+
+        Console::puts("Thread ");
+        Console::puti(thread->ThreadId());
+        Console::puts(" blocked\n");
+
+        blocked_queue.enqueue(thread);
+        SYSTEM_SCHEDULER->yield();
+    }
+}
+
+bool BlockingDisk::is_ready() {
+    return SimpleDisk::is_ready();
 }
 
 /*--------------------------------------------------------------------------*/

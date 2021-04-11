@@ -1,9 +1,9 @@
 /*
      File        : blocking_disk.H
 
-     Author      : 
+     Author      : Chrysanthos Pepi
 
-     Date        : 
+     Date        : 08 APR 21
      Description : 
 
 */
@@ -21,6 +21,7 @@
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
+#include "queue.H"
 #include "simple_disk.H"
 
 /*--------------------------------------------------------------------------*/
@@ -34,6 +35,9 @@
 /*--------------------------------------------------------------------------*/
 
 class BlockingDisk : public SimpleDisk {
+private:
+    Queue blocked_queue;
+
 public:
     BlockingDisk(DISK_ID _disk_id, unsigned int _size);
     /* Creates a BlockingDisk device with the given size connected to the
@@ -50,8 +54,16 @@ public:
        to the given buffer. No error check! */
 
     virtual void write(unsigned long _block_no, unsigned char *_buf);
+
     /* Writes 512 Bytes from the buffer to the given block on the disk. */
 
+    Thread *get_blocked_thread();
+
+    int is_blocked_queue_empty();
+
+    void wait_until_ready();
+
+    bool is_ready();
 };
 
 #endif
