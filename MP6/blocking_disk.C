@@ -38,11 +38,11 @@ BlockingDisk::BlockingDisk(DISK_ID _disk_id, unsigned int _size)
 
 }
 
-Thread *BlockingDisk::get_blocked_thread() {
+Thread *BlockingDisk::get_thread() {
     return blocked_queue.dequeue();
 }
 
-int BlockingDisk::is_blocked_queue_empty() {
+bool BlockingDisk::is_empty() {
     return blocked_queue.is_empty();
 }
 
@@ -68,13 +68,9 @@ bool BlockingDisk::is_ready() {
 /*--------------------------------------------------------------------------*/
 
 void BlockingDisk::read(unsigned long _block_no, unsigned char *_buf) {
-    // -- REPLACE THIS!!!
     SimpleDisk::read(_block_no, _buf);
-
 }
 
-
 void BlockingDisk::write(unsigned long _block_no, unsigned char *_buf) {
-    // -- REPLACE THIS!!!
     SimpleDisk::write(_block_no, _buf);
 }

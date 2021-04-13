@@ -57,11 +57,11 @@ public:
 
     /* Writes 512 Bytes from the buffer to the given block on the disk. */
 
-    Thread *get_blocked_thread();
-
-    int is_blocked_queue_empty();
-
     void wait_until_ready();
+
+    Thread *get_thread();
+
+    bool is_empty();
 
     bool is_ready();
 };

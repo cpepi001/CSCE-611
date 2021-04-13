@@ -45,20 +45,15 @@
 /*--------------------------------------------------------------------------*/
 
 Scheduler::Scheduler() {
-    blocking_disk = NULL;
+    disk = NULL;
 
     Console::puts("Constructed Scheduler.\n");
 }
 
 void Scheduler::yield() {
-//    if (Machine::interrupts_enabled())
-//        Machine::disable_interrupts();
-
-    if (blocking_disk != NULL) {
-        if (!blocking_disk->is_blocked_queue_empty() && blocking_disk->is_ready()) {
-            Thread *_thread = blocking_disk->get_blocked_thread();
-            resume(_thread);
-        }
+    if (!disk->is_empty() && disk->is_ready()) {
+        Thread *_thread = disk->get_thread();
+        resume(_thread);
     }
 
     if (ready_queue.is_empty())
@@ -71,19 +66,10 @@ void Scheduler::yield() {
 //    Console::puts(" acquired CPU\n");
 
     Thread::dispatch_to(_thread);
-
-//    if (!Machine::interrupts_enabled())
-//        Machine::enable_interrupts();
 }
 
 void Scheduler::resume(Thread *_thread) {
-//    if (Machine::interrupts_enabled())
-//        Machine::disable_interrupts();
-
     ready_queue.enqueue(_thread);
-
-//    if (!Machine::interrupts_enabled())
-//        Machine::enable_interrupts();
 }
 
 void Scheduler::add(Thread *_thread) {
@@ -91,17 +77,23 @@ void Scheduler::add(Thread *_thread) {
 }
 
 void Scheduler::terminate(Thread *_thread) {
-//    if (Machine::interrupts_enabled())
-//        Machine::disable_interrupts();
-
     ready_queue.delete_thread(_thread);
-
-//    if (!Machine::interrupts_enabled())
-//        Machine::enable_interrupts();
 }
+
+#ifndef _DISK_MIRRORING_
 
 void Scheduler::add_disk(BlockingDisk *_disk) {
-    if (blocking_disk == NULL) {
-        blocking_disk = _disk;
+    if (disk == NULL) {
+        disk = _disk;
     }
 }
+
+#else
+
+void Scheduler::add_disk(MirroringDisk *_disk) {
+    if (disk == NULL) {
+        disk = _disk;
+    }
+}
+
+#endif

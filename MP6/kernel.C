@@ -26,6 +26,8 @@
    other in a co-routine fashion.
 */
 
+#define _DISK_MIRRORING_
+
 #define MB * (0x1 << 20)
 #define KB * (0x1 << 10)
 
@@ -49,10 +51,13 @@
 #include "thread.H"         /* THREAD MANAGEMENT */
 
 #ifdef _USES_SCHEDULER_
+
 #include "scheduler.H"      /* WE WILL NEED A SCHEDULER WITH BlockingDisk */
+
 #endif
 
 #include "blocking_disk.H"    /* DISK DEVICE */
+#include "mirroring_disk.H"
 /*--------------------------------------------------------------------------*/
 /* MEMORY MANAGEMENT */
 /*--------------------------------------------------------------------------*/
@@ -103,7 +108,11 @@ Scheduler *SYSTEM_SCHEDULER;
 /*--------------------------------------------------------------------------*/
 
 /* -- A POINTER TO THE SYSTEM DISK */
+#ifndef _DISK_MIRRORING_
 BlockingDisk *SYSTEM_DISK;
+#else
+MirroringDisk *SYSTEM_DISK;
+#endif
 
 #define SYSTEM_DISK_SIZE (10 MB)
 
@@ -385,7 +394,11 @@ int main() {
 
     /* -- DISK DEVICE -- */
 
+#ifndef _DISK_MIRRORING_
     SYSTEM_DISK = new BlockingDisk(MASTER, SYSTEM_DISK_SIZE);
+#else
+    SYSTEM_DISK = new MirroringDisk(SYSTEM_DISK_SIZE);
+#endif
     SYSTEM_SCHEDULER->add_disk(SYSTEM_DISK);
 
     //Let's test the disk

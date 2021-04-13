@@ -13,7 +13,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+#define _DISK_MIRRORING_
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -22,6 +22,7 @@
 #include "queue.H"
 #include "thread.H"
 #include "blocking_disk.H"
+#include "mirroring_disk.H"
 
 /*--------------------------------------------------------------------------*/
 /* !!! IMPLEMENTATION HINT !!! */
@@ -59,7 +60,11 @@
 class Scheduler {
 private:
     Queue ready_queue;
-    BlockingDisk *blocking_disk;
+#ifndef _DISK_MIRRORING_
+    BlockingDisk *disk;
+#else
+    MirroringDisk *disk;
+#endif
 
     /* The scheduler may need private members... */
 
@@ -97,8 +102,11 @@ public:
        of the thread.
        Graciously handle the case where the thread wants to terminate itself.*/
 
-    virtual void add_disk(BlockingDisk *_blocking_disk);
-
+#ifndef _DISK_MIRRORING_
+    virtual void add_disk(BlockingDisk *_disk);
+#else
+    virtual void add_disk(MirroringDisk *_disk);
+#endif
 };
 
 
