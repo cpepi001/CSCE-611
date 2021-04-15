@@ -45,7 +45,13 @@
 /*--------------------------------------------------------------------------*/
 
 Scheduler::Scheduler() {
+#ifdef _BLOCKING_DISK_
     disk = NULL;
+#endif
+
+#ifdef _MIRRORING_DISK_
+    disk = NULL;
+#endif
 
     Console::puts("Constructed Scheduler.\n");
 }
@@ -56,11 +62,22 @@ void Scheduler::yield() {
         Machine::disable_interrupts();
 #endif
 
-#ifndef _INTERRUPTS_
+#ifdef _BLOCKING_DISK_
+    #ifndef _INTERRUPTS_
     if (!disk->is_empty() && disk->is_ready()) {
         Thread *_thread = disk->get_thread();
         resume(_thread);
     }
+#endif
+#endif
+
+#ifdef _MIRRORING_DISK_
+    #ifndef _INTERRUPTS_
+    if (!disk->is_empty() && disk->is_ready()) {
+        Thread *_thread = disk->get_thread();
+        resume(_thread);
+    }
+#endif
 #endif
 
     if (ready_queue.is_empty())
@@ -107,20 +124,18 @@ void Scheduler::terminate(Thread *_thread) {
 #endif
 }
 
-#ifndef _DISK_MIRRORING_
-
+#ifdef _BLOCKING_DISK_
 void Scheduler::add_disk(BlockingDisk *_disk) {
     if (disk == NULL) {
         disk = _disk;
     }
 }
+#endif
 
-#else
-
+#ifdef _MIRRORING_DISK_
 void Scheduler::add_disk(MirroringDisk *_disk) {
     if (disk == NULL) {
         disk = _disk;
     }
 }
-
 #endif

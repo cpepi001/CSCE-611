@@ -2,18 +2,27 @@
 // Created by cpepi001 on 4/11/21.
 //
 
+#include "tas.H"
 #include "scheduler.H"
 #include "mirroring_disk.H"
 
+#ifdef _MIRRORING_DISK_
+#ifdef _THREAD_SAFE_
+TAS *tas;
+#endif
+#endif
+
 extern Scheduler *SYSTEM_SCHEDULER;
 
-MirroringDisk::MirroringDisk(unsigned int _size) {
+MirroringDisk::MirroringDisk() {
+#ifdef _MIRRORING_DISK_
+#ifdef _THREAD_SAFE_
+    tas = new TAS();
+#endif
+#endif
 #ifdef _INTERRUPTS_
     InterruptHandler::register_handler(14, this);
 #endif
-
-    primary = new SimpleDisk(MASTER, _size);
-    secondary = new SimpleDisk(SLAVE, _size);
 }
 
 bool MirroringDisk::is_empty() {
@@ -36,12 +45,14 @@ void MirroringDisk::wait_until_ready() {
     if (!is_ready()) {
         Thread *thread = Thread::CurrentThread();
 
-//        Console::puts("Thread ");
-//        Console::puti(thread->ThreadId());
-//        Console::puts(" blocked\n");
+        Console::puts("Thread ");
+        Console::puti(thread->ThreadId());
+        Console::puts(" blocked\n");
 
         blocked_queue.enqueue(thread);
+#ifdef _USES_SCHEDULER_
         SYSTEM_SCHEDULER->yield();
+#endif
     }
 #ifdef _INTERRUPTS_
     if (!Machine::interrupts_enabled())
@@ -74,6 +85,11 @@ void MirroringDisk::read(unsigned long _block_no, unsigned char *_buf) {
 
     wait_until_ready();
 
+#ifdef _MIRRORING_DISK_
+#ifdef _THREAD_SAFE_
+    tas->acquire();
+#endif
+#endif
     /* read data from port */
     int i;
     unsigned short tmpw;
@@ -82,6 +98,11 @@ void MirroringDisk::read(unsigned long _block_no, unsigned char *_buf) {
         _buf[i * 2] = (unsigned char) tmpw;
         _buf[i * 2 + 1] = (unsigned char) (tmpw >> 8);
     }
+#ifdef _MIRRORING_DISK_
+#ifdef _THREAD_SAFE_
+    tas->release();
+#endif
+#endif
 #ifdef _INTERRUPTS_
     if (!Machine::interrupts_enabled())
         Machine::enable_interrupts();
@@ -106,6 +127,11 @@ void MirroringDisk::write(DISK_ID _disk_id, unsigned long _block_no, unsigned ch
 
     wait_until_ready();
 
+#ifdef _MIRRORING_DISK_
+#ifdef _THREAD_SAFE_
+    tas->acquire();
+#endif
+#endif
     /* write data to port */
     int i;
     unsigned short tmpw;
@@ -113,6 +139,11 @@ void MirroringDisk::write(DISK_ID _disk_id, unsigned long _block_no, unsigned ch
         tmpw = _buf[2 * i] | (_buf[2 * i + 1] << 8);
         Machine::outportw(0x1F0, tmpw);
     }
+#ifdef _MIRRORING_DISK_
+#ifdef _THREAD_SAFE_
+    tas->release();
+#endif
+#endif
 }
 
 void MirroringDisk::issue_operation(DISK_ID _disk_id, DISK_OPERATION _op, unsigned long _block_no) {

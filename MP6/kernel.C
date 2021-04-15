@@ -17,16 +17,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-/* -- COMMENT/UNCOMMENT THE FOLLOWING LINE TO EXCLUDE/INCLUDE SCHEDULER CODE */
-
-#define _USES_SCHEDULER_
-/* This macro is defined when we want to force the code below to use 
-   a scheduler.
-   Otherwise, no scheduler is used, and the threads pass control to each 
-   other in a co-routine fashion.
-*/
-
-#define _DISK_MIRRORING_
+/* -- (none) -- */
 
 #define MB * (0x1 << 20)
 #define KB * (0x1 << 10)
@@ -56,6 +47,8 @@
 
 #endif
 
+#include "scheduler.H"
+#include "simple_disk.H"
 #include "blocking_disk.H"    /* DISK DEVICE */
 #include "mirroring_disk.H"
 /*--------------------------------------------------------------------------*/
@@ -108,10 +101,14 @@ Scheduler *SYSTEM_SCHEDULER;
 /*--------------------------------------------------------------------------*/
 
 /* -- A POINTER TO THE SYSTEM DISK */
-#ifndef _DISK_MIRRORING_
+#ifdef _BLOCKING_DISK_
 BlockingDisk *SYSTEM_DISK;
 #else
+#ifdef _MIRRORING_DISK_
 MirroringDisk *SYSTEM_DISK;
+#else
+SimpleDisk *SYSTEM_DISK;
+#endif
 #endif
 
 #define SYSTEM_DISK_SIZE (10 MB)
@@ -359,6 +356,15 @@ int main() {
 
     ExceptionHandler::register_handler(0, &dbz_handler);
 
+    class _15_Handler : public InterruptHandler {
+    public:
+        virtual void handle_interrupt(REGS *_regs) {
+            // Skip interrupt
+        }
+    } _15_handler;
+
+    InterruptHandler::register_handler(15, &_15_handler);
+
     /* -- INITIALIZE MEMORY -- */
     /*    NOTE: We don't have paging enabled in this MP. */
     /*    NOTE2: This is not an exercise in memory management. The implementation
@@ -394,12 +400,17 @@ int main() {
 
     /* -- DISK DEVICE -- */
 
-#ifndef _DISK_MIRRORING_
+#ifdef _BLOCKING_DISK_
     SYSTEM_DISK = new BlockingDisk(MASTER, SYSTEM_DISK_SIZE);
-#else
-    SYSTEM_DISK = new MirroringDisk(SYSTEM_DISK_SIZE);
-#endif
     SYSTEM_SCHEDULER->add_disk(SYSTEM_DISK);
+#else
+#ifdef _MIRRORING_DISK_
+    SYSTEM_DISK = new MirroringDisk();
+    SYSTEM_SCHEDULER->add_disk(SYSTEM_DISK);
+#else
+    SYSTEM_DISK = new SimpleDisk(MASTER, SYSTEM_DISK_SIZE);
+#endif
+#endif
 
     //Let's test the disk
 //    disk_test();

@@ -13,8 +13,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-#define _DISK_MIRRORING_
-#define _INTERRUPTS_
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -61,9 +60,11 @@
 class Scheduler {
 private:
     Queue ready_queue;
-#ifndef _DISK_MIRRORING_
+#ifdef _BLOCKING_DISK_
     BlockingDisk *disk;
-#else
+#endif
+
+#ifdef _MIRRORING_DISK_
     MirroringDisk *disk;
 #endif
 
@@ -103,11 +104,14 @@ public:
        of the thread.
        Graciously handle the case where the thread wants to terminate itself.*/
 
-#ifndef _DISK_MIRRORING_
+#ifdef _BLOCKING_DISK_
     virtual void add_disk(BlockingDisk *_disk);
-#else
+#endif
+
+#ifdef _MIRRORING_DISK_
     virtual void add_disk(MirroringDisk *_disk);
 #endif
+
 };
 
 

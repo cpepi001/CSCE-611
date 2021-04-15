@@ -20,7 +20,24 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+//#define _USES_SCHEDULER_
+
+//#define _BLOCKING_DISK_
+//#define _MIRRORING_DISK_
+
+//#define _INTERRUPTS_
+//#define _THREAD_SAFE_
+
+/*--------------------------------------------------------------------------*/
+/* Options */
+/*--------------------------------------------------------------------------*/
+
+/*
+ * If _USES_SCHEDULER_ is enable you should enable either _BLOCKING_DISK_ or
+ * _MIRRORING_DISK_. Then you can enable _THREAD_SAFE_ or _INTERRUPTS_ or both
+ *
+ * If _USES_SCHEDULER_ is not enable you cannot enable other options
+ */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */

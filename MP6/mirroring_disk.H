@@ -2,10 +2,8 @@
 // Created by cpepi001 on 4/11/21.
 //
 
-#ifndef MP6_MIRRORING_DISK_H
-#define MP6_MIRRORING_DISK_H
-
-#define _INTERRUPTS_
+#ifndef _MIRRORING_DISK_H
+#define _MIRRORING_DISK_H
 
 #include "queue.H"
 #include "interrupts.H"
@@ -14,13 +12,11 @@
 class MirroringDisk : public InterruptHandler {
 private:
     Queue blocked_queue;
-    SimpleDisk *primary;
-    SimpleDisk *secondary;
 
     void write(DISK_ID _disk_id, unsigned long _block_no, unsigned char *_buf);
 
 public:
-    MirroringDisk(unsigned int _size);
+    MirroringDisk();
 
     bool is_ready();
 
@@ -40,4 +36,4 @@ public:
 };
 
 
-#endif //MP6_MIRRORING_DISK_H
+#endif //_MIRRORING_DISK_H

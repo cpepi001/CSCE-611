@@ -15,7 +15,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-#define _INTERRUPTS_
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -57,6 +57,8 @@ public:
     virtual void write(unsigned long _block_no, unsigned char *_buf);
 
     /* Writes 512 Bytes from the buffer to the given block on the disk. */
+
+    void issue_operation(DISK_OPERATION _op, unsigned long _block_no);
 
     void handle_interrupt(REGS *_regs);
 
