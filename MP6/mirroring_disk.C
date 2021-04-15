@@ -8,6 +8,10 @@
 extern Scheduler *SYSTEM_SCHEDULER;
 
 MirroringDisk::MirroringDisk(unsigned int _size) {
+#ifdef _INTERRUPTS_
+    InterruptHandler::register_handler(14, this);
+#endif
+
     primary = new SimpleDisk(MASTER, _size);
     secondary = new SimpleDisk(SLAVE, _size);
 }
@@ -17,7 +21,7 @@ bool MirroringDisk::is_empty() {
 }
 
 bool MirroringDisk::is_ready() {
-    return ((Machine::inportb(0x1F7) & 0x08) != 0);;
+    return ((Machine::inportb(0x1F7) & 0x08) != 0);
 }
 
 Thread *MirroringDisk::get_thread() {
@@ -25,19 +29,46 @@ Thread *MirroringDisk::get_thread() {
 }
 
 void MirroringDisk::wait_until_ready() {
+#ifdef _INTERRUPTS_
+    if (Machine::interrupts_enabled())
+        Machine::disable_interrupts();
+#endif
     if (!is_ready()) {
         Thread *thread = Thread::CurrentThread();
 
-        Console::puts("Thread ");
-        Console::puti(thread->ThreadId());
-        Console::puts(" blocked\n");
+//        Console::puts("Thread ");
+//        Console::puti(thread->ThreadId());
+//        Console::puts(" blocked\n");
 
         blocked_queue.enqueue(thread);
         SYSTEM_SCHEDULER->yield();
     }
+#ifdef _INTERRUPTS_
+    if (!Machine::interrupts_enabled())
+        Machine::enable_interrupts();
+#endif
+}
+
+void MirroringDisk::handle_interrupt(REGS *_regs) {
+#ifdef _INTERRUPTS_
+    if (!is_empty() && is_ready()) {
+        Thread *thread = blocked_queue.dequeue();
+
+        Console::puts("\nThread ");
+        Console::puti(thread->ThreadId());
+        Console::puts(" get unblocked\n");
+
+        SYSTEM_SCHEDULER->resume(thread);
+    }
+    Machine::outportb(0x20, 0x20);
+#endif
 }
 
 void MirroringDisk::read(unsigned long _block_no, unsigned char *_buf) {
+#ifdef _INTERRUPTS_
+    if (Machine::interrupts_enabled())
+        Machine::disable_interrupts();
+#endif
     issue_operation(MASTER, READ, _block_no);
     issue_operation(SLAVE, READ, _block_no);
 
@@ -51,11 +82,37 @@ void MirroringDisk::read(unsigned long _block_no, unsigned char *_buf) {
         _buf[i * 2] = (unsigned char) tmpw;
         _buf[i * 2 + 1] = (unsigned char) (tmpw >> 8);
     }
+#ifdef _INTERRUPTS_
+    if (!Machine::interrupts_enabled())
+        Machine::enable_interrupts();
+#endif
 }
 
 void MirroringDisk::write(unsigned long _block_no, unsigned char *_buf) {
-    primary->write(_block_no, _buf);
-    secondary->write(_block_no, _buf);
+#ifdef _INTERRUPTS_
+    if (Machine::interrupts_enabled())
+        Machine::disable_interrupts();
+#endif
+    write(MASTER, _block_no, _buf);
+    write(SLAVE, _block_no, _buf);
+#ifdef _INTERRUPTS_
+    if (!Machine::interrupts_enabled())
+        Machine::enable_interrupts();
+#endif
+}
+
+void MirroringDisk::write(DISK_ID _disk_id, unsigned long _block_no, unsigned char *_buf) {
+    issue_operation(_disk_id, WRITE, _block_no);
+
+    wait_until_ready();
+
+    /* write data to port */
+    int i;
+    unsigned short tmpw;
+    for (i = 0; i < 256; i++) {
+        tmpw = _buf[2 * i] | (_buf[2 * i + 1] << 8);
+        Machine::outportw(0x1F0, tmpw);
+    }
 }
 
 void MirroringDisk::issue_operation(DISK_ID _disk_id, DISK_OPERATION _op, unsigned long _block_no) {

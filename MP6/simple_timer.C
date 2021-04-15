@@ -61,7 +61,7 @@ void SimpleTimer::handle_interrupt(REGS *_r) {
     if (ticks >= hz) {
         seconds++;
         ticks = 0;
-        Console::puts("One second has passed\n");
+        Console::puts("\nOne second has passed\n");
     }
 }
 

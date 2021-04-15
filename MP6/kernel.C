@@ -425,8 +425,8 @@ int main() {
     Console::puts("DONE\n");
 
     Console::puts("CREATING THREAD 2...");
-    char *stack2 = new char[1024];
-    thread2 = new Thread(fun2, stack2, 1024);
+    char *stack2 = new char[2048];
+    thread2 = new Thread(fun2, stack2, 2048);
     Console::puts("DONE\n");
 
     Console::puts("CREATING THREAD 3...");
@@ -435,8 +435,8 @@ int main() {
     Console::puts("DONE\n");
 
     Console::puts("CREATING THREAD 4...");
-    char *stack4 = new char[1024];
-    thread4 = new Thread(fun4, stack4, 1024);
+    char *stack4 = new char[2048];
+    thread4 = new Thread(fun4, stack4, 2048);
     Console::puts("DONE\n");
 
 #ifdef _USES_SCHEDULER_

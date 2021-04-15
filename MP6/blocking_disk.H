@@ -15,13 +15,14 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+#define _INTERRUPTS_
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
 #include "queue.H"
+#include "interrupts.H"
 #include "simple_disk.H"
 
 /*--------------------------------------------------------------------------*/
@@ -34,7 +35,7 @@
 /* B l o c k i n g D i s k  */
 /*--------------------------------------------------------------------------*/
 
-class BlockingDisk : public SimpleDisk {
+class BlockingDisk : public SimpleDisk, public InterruptHandler {
 private:
     Queue blocked_queue;
 
@@ -56,6 +57,8 @@ public:
     virtual void write(unsigned long _block_no, unsigned char *_buf);
 
     /* Writes 512 Bytes from the buffer to the given block on the disk. */
+
+    void handle_interrupt(REGS *_regs);
 
     void wait_until_ready();
 
