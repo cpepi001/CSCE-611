@@ -33,8 +33,7 @@
    We send a sequence of commands to the PICs - 8259's - in order
    to have IRQ0 to IRQ15 be remapped to IDT entries 32 to 47.
 */
-static void irq_remap()
-{
+static void irq_remap() {
     Machine::outportb(0x20, 0x11);
     Machine::outportb(0xA0, 0x11);
     Machine::outportb(0x21, 0x20);
@@ -54,7 +53,7 @@ static void irq_remap()
 
 void IRQ::init() {
 
-  irq_remap();
+    irq_remap();
 
 
 }

@@ -12,7 +12,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -36,17 +36,17 @@ FileSystem::FileSystem() {
 /* FILE SYSTEM FUNCTIONS */
 /*--------------------------------------------------------------------------*/
 
-bool FileSystem::Mount(SimpleDisk * _disk) {
+bool FileSystem::Mount(SimpleDisk *_disk) {
     Console::puts("mounting file system form disk\n");
     assert(false);
 }
 
-bool FileSystem::Format(SimpleDisk * _disk, unsigned int _size) {
+bool FileSystem::Format(SimpleDisk *_disk, unsigned int _size) {
     Console::puts("formatting disk\n");
     assert(false);
 }
 
-File * FileSystem::LookupFile(int _file_id) {
+File *FileSystem::LookupFile(int _file_id) {
     Console::puts("looking up file\n");
     assert(false);
 }

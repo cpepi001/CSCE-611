@@ -36,46 +36,48 @@
 
 class ExceptionHandler {
 
-  private:
+private:
 
-  /* The Exception Handler Table */
-  const static int EXCEPTION_TABLE_SIZE = 32;
-  static ExceptionHandler * handler_table[EXCEPTION_TABLE_SIZE];
-  
-  public: 
+    /* The Exception Handler Table */
+    const static int EXCEPTION_TABLE_SIZE = 32;
+    static ExceptionHandler *handler_table[EXCEPTION_TABLE_SIZE];
 
-  /* -- POPULATE DISPATCHER TABLE */
+public:
 
-  static void register_handler(unsigned int        _isr_code,
-                               ExceptionHandler  * _handler);
-  /* This function allows to install an exception handler for the given 
-     exception code. The handler is a function pointer defined above. 
-     Interrupt handlers are installed as exception handlers as well.
-     The 'register_interrupt' function uses irq2isr to map the IRQ 
-     number to the code. */
+    /* -- POPULATE DISPATCHER TABLE */
 
-  static void deregister_handler(unsigned int _isr_code);
+    static void register_handler(unsigned int _isr_code,
+                                 ExceptionHandler *_handler);
 
-  /* -- DISPATCHER */
-  static void init_dispatcher();
-  /* This function is called to initialize the high-level exception handling. 
-     No high level exception handlers are installed yet. If an exception 
-     occurs at this point, the system displays an error message and 
-     terminates. */
+    /* This function allows to install an exception handler for the given
+       exception code. The handler is a function pointer defined above.
+       Interrupt handlers are installed as exception handlers as well.
+       The 'register_interrupt' function uses irq2isr to map the IRQ
+       number to the code. */
 
-  static void dispatch_exception(REGS * _r);
-  /* This is the high-level exception dispatcher. It dispatches the exception
-     to the previously registered exception handler. 
-     This function is called by the low-level function 
-     "lowlevel_dispatch_exception(REGS * _r)".*/
+    static void deregister_handler(unsigned int _isr_code);
 
-  /* -- MANAGE INSTANCES OF EXCEPTION HANDLERS */
+    /* -- DISPATCHER */
+    static void init_dispatcher();
 
-  virtual void handle_exception(REGS * _regs) {
-     assert(false); // sometimes pure virtual functions dont link correctly.
-  }
-  /* Different exception handlers are derived from the base class ExceptionHandler
-     and their functionality is implemented in this function.*/
+    /* This function is called to initialize the high-level exception handling.
+       No high level exception handlers are installed yet. If an exception
+       occurs at this point, the system displays an error message and
+       terminates. */
+
+    static void dispatch_exception(REGS *_r);
+    /* This is the high-level exception dispatcher. It dispatches the exception
+       to the previously registered exception handler.
+       This function is called by the low-level function
+       "lowlevel_dispatch_exception(REGS * _r)".*/
+
+    /* -- MANAGE INSTANCES OF EXCEPTION HANDLERS */
+
+    virtual void handle_exception(REGS *_regs) {
+        assert(false); // sometimes pure virtual functions dont link correctly.
+    }
+    /* Different exception handlers are derived from the base class ExceptionHandler
+       and their functionality is implemented in this function.*/
 
 };
 

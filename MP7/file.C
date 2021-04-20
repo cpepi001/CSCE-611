@@ -12,7 +12,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -37,13 +37,13 @@ File::File() {
 /* FILE FUNCTIONS */
 /*--------------------------------------------------------------------------*/
 
-int File::Read(unsigned int _n, char * _buf) {
+int File::Read(unsigned int _n, char *_buf) {
     Console::puts("reading from file\n");
     assert(false);
 }
 
 
-void File::Write(unsigned int _n, const char * _buf) {
+void File::Write(unsigned int _n, const char *_buf) {
     Console::puts("writing to file\n");
     assert(false);
 }
@@ -51,7 +51,7 @@ void File::Write(unsigned int _n, const char * _buf) {
 void File::Reset() {
     Console::puts("reset current position in file\n");
     assert(false);
-    
+
 }
 
 void File::Rewrite() {

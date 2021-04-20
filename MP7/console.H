@@ -37,31 +37,31 @@
 /* -- (none -- */
 
 /*--------------------------------------------------------------------------*/
-/* DATA STRUCTURES */ 
+/* DATA STRUCTURES */
 /*--------------------------------------------------------------------------*/
 
 typedef enum {
-   BLACK         = 0,
-   BLUE          = 1,
-   GREEN         = 2,
-   CYAN          = 3, 
-   RED	         = 4,
-   MAGENTA       = 5,
-   BROWN         = 6,
-   LIGHT_GREY    = 7,
-   DARK_GREY     = 8,  	
-   LIGHT_BLUE    = 9, 	
-   LIGHT_GREEN   = 10, 	
-   LIGHT_CYAN    = 11, 	
-   LIGHT_RED     = 12, 	
-   LIGHT_MAGENTA = 13, 	
-   LIGHT_BROWN   = 14, 	
-   WHITE	     = 15 	
+    BLACK = 0,
+    BLUE = 1,
+    GREEN = 2,
+    CYAN = 3,
+    RED = 4,
+    MAGENTA = 5,
+    BROWN = 6,
+    LIGHT_GREY = 7,
+    DARK_GREY = 8,
+    LIGHT_BLUE = 9,
+    LIGHT_GREEN = 10,
+    LIGHT_CYAN = 11,
+    LIGHT_RED = 12,
+    LIGHT_MAGENTA = 13,
+    LIGHT_BROWN = 14,
+    WHITE = 15
 } COLOR_CODE;
 
 
 /*--------------------------------------------------------------------------*/
-/* FORWARDS */ 
+/* FORWARDS */
 /*--------------------------------------------------------------------------*/
 
 /* -- (none) -- */
@@ -72,38 +72,44 @@ typedef enum {
 
 class Console {
 private:
-  static int attrib;                  /* background and foreground color */
-  static int csr_x;                   /* position of cursor              */
-  static int csr_y;
-  static unsigned short * textmemptr; /* text pointer */
+    static int attrib;                  /* background and foreground color */
+    static int csr_x;                   /* position of cursor              */
+    static int csr_y;
+    static unsigned short *textmemptr; /* text pointer */
 public:
-  
-  /* -- INITIALIZER (we have no constructor, there is no memory mgmt yet.) */
-  static void init(unsigned char _fore_color = WHITE, 
-                   unsigned char _back_color = BLACK);
-  
-  static void scroll();
 
-  static void move_cursor();
-  /* Update the hardware cursor. */
+    /* -- INITIALIZER (we have no constructor, there is no memory mgmt yet.) */
+    static void init(unsigned char _fore_color = WHITE,
+                     unsigned char _back_color = BLACK);
 
-  static void cls();
-  /* Clear the screen. */
+    static void scroll();
 
-  static void putch(const char _c);
-  /* Put a single character on the screen. */
+    static void move_cursor();
 
-  static void puts(const char * _s);
-  /* Display a NULL-terminated string on the screen.*/
+    /* Update the hardware cursor. */
 
-  static void puti(const int _i);
-  /* Display a integer on the screen.*/
+    static void cls();
 
-  static void putui(const unsigned int _u);
-  /* Display a unsigned integer on the screen.*/
+    /* Clear the screen. */
 
-  static void set_TextColor(unsigned char _fore_color, unsigned char _back_color);
-  /* Set the color of the foreground and background. */
+    static void putch(const char _c);
+
+    /* Put a single character on the screen. */
+
+    static void puts(const char *_s);
+
+    /* Display a NULL-terminated string on the screen.*/
+
+    static void puti(const int _i);
+
+    /* Display a integer on the screen.*/
+
+    static void putui(const unsigned int _u);
+
+    /* Display a unsigned integer on the screen.*/
+
+    static void set_TextColor(unsigned char _fore_color, unsigned char _back_color);
+    /* Set the color of the foreground and background. */
 
 };
 

@@ -20,7 +20,7 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-    /* -- (none) -- */
+/* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -36,34 +36,37 @@ class SimpleTimer : public InterruptHandler {
 
 private:
 
-  /* How long has the system been running? */
-  unsigned long seconds; 
-  int           ticks;   /* ticks since last "seconds" update.    */
+    /* How long has the system been running? */
+    unsigned long seconds;
+    int ticks;   /* ticks since last "seconds" update.    */
 
-  /* At what frequency do we update the ticks counter? */
-  int hz;                /* Actually, by defaults it is 18.22Hz.
+    /* At what frequency do we update the ticks counter? */
+    int hz;                /* Actually, by defaults it is 18.22Hz.
                             In this way, a 16-bit counter wraps
                             around every hour.                    */
 
-  void set_frequency(int _hz);
-  /* Set the interrupt frequency for the simple timer. */
+    void set_frequency(int _hz);
+    /* Set the interrupt frequency for the simple timer. */
 
 public :
 
-  SimpleTimer(int _hz);
-  /* Initialize the simple timer, and set its frequency. */
+    SimpleTimer(int _hz);
 
-  virtual void handle_interrupt(REGS *_r);
-  /* This must be installed as the interrupt handler for the timer 
-     when the system gets initialized. (e.g. in "kernel.C")  
-  */
+    /* Initialize the simple timer, and set its frequency. */
 
-  void current(unsigned long * _seconds, int * _ticks);
-  /* Return the current "time" since the system started. */
+    virtual void handle_interrupt(REGS *_r);
 
-  void wait(unsigned long _seconds);
-  /* Wait for a particular time to be passed. The implementation is based 
-     on busy looping! */
+    /* This must be installed as the interrupt handler for the timer
+       when the system gets initialized. (e.g. in "kernel.C")
+    */
+
+    void current(unsigned long *_seconds, int *_ticks);
+
+    /* Return the current "time" since the system started. */
+
+    void wait(unsigned long _seconds);
+    /* Wait for a particular time to be passed. The implementation is based
+       on busy looping! */
 
 };
 
