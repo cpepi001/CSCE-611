@@ -173,8 +173,8 @@ void exercise_file_system(FileSystem *_file_system) {
     file2->Write(20, STRING2);
 
     /* -- "Close" files -- */
-    delete file1;
-    delete file2;
+    delete[] file1;
+    delete[] file2;
 
     /* -- "Open files again -- */
     file1 = _file_system->LookupFile(1);
@@ -197,8 +197,8 @@ void exercise_file_system(FileSystem *_file_system) {
     }
 
     /* -- "Close" files again -- */
-    delete file1;
-    delete file2;
+    delete[] file1;
+    delete[] file2;
 
     /* -- Delete both files -- */
     assert(_file_system->DeleteFile(1));

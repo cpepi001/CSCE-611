@@ -169,6 +169,7 @@ void Console::putch(const char _c) {
     /* Scroll the screen if needed, and finally move the cursor */
     scroll();
     move_cursor();
+    Machine::outportb(0xe9, _c);
 }
 
 /* Uses the above routine to output a string... */
