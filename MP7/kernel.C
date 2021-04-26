@@ -270,7 +270,7 @@ void fun3() {
 
     Console::puts("FUN 3 INVOKED! <THIS THREAD EXERCISES THE FILE SYSTEM> \n");
 
-    assert(FileSystem::Format(SYSTEM_DISK, (1 MB)));
+    assert(FILE_SYSTEM->Format(SYSTEM_DISK, (1 MB)));
 
     assert(FILE_SYSTEM->Mount(SYSTEM_DISK));
 
@@ -371,6 +371,7 @@ int main() {
     /* -- DISK DEVICE -- */
 
     SYSTEM_DISK = new SimpleDisk(MASTER, SYSTEM_DISK_SIZE);
+    FILE_SYSTEM = new FileSystem();
 
     /* NOTE: The timer chip starts periodically firing as 
              soon as we enable interrupts.

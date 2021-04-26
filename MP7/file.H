@@ -21,7 +21,7 @@
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+#include "file_system.H"
 
 /*--------------------------------------------------------------------------*/
 /* DATA STRUCTURES */
@@ -30,15 +30,31 @@
 /* -- (none) -- */
 
 /*--------------------------------------------------------------------------*/
+/* FORWARD DECLARATIONS */
+/*--------------------------------------------------------------------------*/
+
+class FileSystem;
+
+/*--------------------------------------------------------------------------*/
 /* class  F i l e   */
 /*--------------------------------------------------------------------------*/
 
+extern FileSystem *FILE_SYSTEM;
+
 class File {
+
+    friend class FileSystem;
 
 private:
     /* -- your file data structures here ... */
-
+    int file_id;
+    unsigned int size;
+    unsigned long position;
+    unsigned long current_block;
+    unsigned char buf[BLOCK_SIZE];
+    unsigned long blocks[INDEX_SIZE];
     /* -- maybe it would be good to have a reference to the file system? */
+    FileSystem *file_system;
 
 public:
 

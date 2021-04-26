@@ -18,7 +18,9 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+#define BYTE 8
+#define INDEX_SIZE 16
+#define BLOCK_SIZE  512
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -31,13 +33,17 @@
 /* DATA STRUCTURES */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+typedef struct node {
+    int file_id;
+    unsigned int size;
+    unsigned long block[INDEX_SIZE];
+} i_node;
 
 /*--------------------------------------------------------------------------*/
 /* FORWARD DECLARATIONS */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+class File;
 
 /*--------------------------------------------------------------------------*/
 /* F i l e S y s t e m  */
@@ -45,13 +51,18 @@
 
 class FileSystem {
 
-    friend class File; /* -- not sure if we need this; feel free to delete */
+    friend class File;
 
 private:
     /* -- DEFINE YOUR FILE SYSTEM DATA STRUCTURES HERE. */
 
+    i_node *iNode;
     SimpleDisk *disk;
-    unsigned int size;
+    unsigned long total_blocks;
+    unsigned char buf[BLOCK_SIZE];
+    unsigned char block_map[BLOCK_SIZE];
+
+    void set_iNode(int);
 
 public:
 
@@ -64,7 +75,7 @@ public:
     /* Associates this file system with a disk. Limit to at most one file system per disk.
      Returns true if operation successful (i.e. there is indeed a file system on the disk.) */
 
-    static bool Format(SimpleDisk *_disk, unsigned int _size);
+    bool Format(SimpleDisk *_disk, unsigned int _size);
 
     /* Wipes any file system from the disk and installs an empty file system of given size. */
 
@@ -80,6 +91,14 @@ public:
 
     bool DeleteFile(int _file_id);
     /* Delete file with given id in the file system; free any disk block occupied by the file. */
+
+    void EraseFile(int);
+
+    void UpdateFile(File *, int, unsigned int);
+
+    int GetBlock();
+
+    void FreeBlock(unsigned long);
 
 };
 
