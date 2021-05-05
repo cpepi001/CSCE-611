@@ -28,6 +28,11 @@
 #include "console.H"
 #include "simple_disk.H"
 #include "machine.H"
+#include "tas.H"
+
+#ifdef _THREAD_SAFE_
+TAS *tas;
+#endif
 
 /*--------------------------------------------------------------------------*/
 /* CONSTRUCTOR */
@@ -36,6 +41,9 @@
 SimpleDisk::SimpleDisk(DISK_ID _disk_id, unsigned int _size) {
     disk_id = _disk_id;
     disk_size = _size;
+#ifdef _THREAD_SAFE_
+    tas = new TAS();
+#endif
 }
 
 /*--------------------------------------------------------------------------*/
@@ -97,6 +105,9 @@ void SimpleDisk::write(unsigned long _block_no, unsigned char *_buf) {
 
     wait_until_ready();
 
+#ifdef _THREAD_SAFE_
+    tas->acquire();
+#endif
     /* write data to port */
     int i;
     unsigned short tmpw;
@@ -104,5 +115,7 @@ void SimpleDisk::write(unsigned long _block_no, unsigned char *_buf) {
         tmpw = _buf[2 * i] | (_buf[2 * i + 1] << 8);
         Machine::outportw(0x1F0, tmpw);
     }
-
+#ifdef _THREAD_SAFE_
+    tas->release();
+#endif
 }
